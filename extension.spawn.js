@@ -208,7 +208,7 @@ StructureSpawn.prototype.createBigCreep =
 
     StructureSpawn.prototype.createShortAttacker =
     function (target) {
-        return this.createCreep([ATTACK,ATTACK, HEAL, HEAL, MOVE, MOVE, MOVE,MOVE], undefined, { role: 'shortAttacker', target: target })
+        return this.createCreep([RANGED_ATTACK ,ATTACK, HEAL, HEAL, MOVE, MOVE, MOVE,MOVE], undefined, { role: 'shortAttacker', target: target })
     }
 
     StructureSpawn.prototype.createMineralsLorry =
