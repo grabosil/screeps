@@ -1,4 +1,4 @@
-const listOfRoles = ['harvester', 'lorry', 'claimer', 'upgrader', 'repairer', 'builder', 'wallRepairer', 'mineralLorry']
+const listOfRoles = ['harvester', 'lorry', 'claimer', 'upgrader', 'repairer', 'builder', 'wallRepairer', 'mineralLorry', 'shortAttacker']
 
 StructureSpawn.prototype.createNewCreeper = function() {
     const room = this.room;
@@ -17,7 +17,8 @@ StructureSpawn.prototype.createNewCreeper = function() {
             upgrader: 1,
             repairer: 0,
             builder: 1,
-            wallRepairer: 0
+            wallRepairer: 0,
+            shortAttacker: 0
         }
     }
 
@@ -99,7 +100,9 @@ StructureSpawn.prototype.createNewCreeper = function() {
                     name = this.createLorry(150);
                 } else if (role == 'mineralLorry') {
                     name = this.createMineralsLorry()
-                } else {
+                } else if (role == 'shortAttacker') {
+                    name = this.createShortAttacker('W97S78')    
+                }else {
                     name = this.createBigCreep(fullEnergy, role)
                 }
             } 
@@ -205,7 +208,7 @@ StructureSpawn.prototype.createBigCreep =
 
     StructureSpawn.prototype.createShortAttacker =
     function (target) {
-        return this.createCreep([ATTACK,ATTACK, MOVE,MOVE], undefined, { role: 'shortAttacker', target: target })
+        return this.createCreep([ATTACK,ATTACK, HEAL, HEAL, MOVE, MOVE, MOVE,MOVE], undefined, { role: 'shortAttacker', target: target })
     }
 
     StructureSpawn.prototype.createMineralsLorry =
