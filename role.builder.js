@@ -21,6 +21,7 @@ module.exports = {
                     creep.moveTo(constructionSite)
                 }
             } else {
+                creep.memory.role = 'upgrader'
                 roleUpgrader.run(creep)
             }
         } else {

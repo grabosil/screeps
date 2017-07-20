@@ -7,34 +7,18 @@ module.exports = {
         }
 
         if (creep.memory.working == true) {
-            var structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
-                filter: (s) => (s.structureType == STRUCTURE_SPAWN
-                             || s.structureType == STRUCTURE_EXTENSION)
-                             && s.energy < s.energyCapacity
-            })
-
-            if(structure == undefined) {
-                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
-                    filter: (s) => s.structureType == STRUCTURE_TOWER
-                             && s.energy < s.energyCapacity
-                })
-            }
-            
-            if(structure == undefined) {
-                structure = creep.room.storage
-            }
-
+            let structure = creep.room.storage
             if (structure != undefined) {
-                if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(structure)
+                if (creep.carry.H > 0) {
+                    if (creep.transfer(structure, RESOURCE_HYDROGEN) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(structure)
+                    }
                 }
             }
         } else {
-
             let resources = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
-                filter: r => r.resourceType == RESOURCE_ENERGY
+                filter: r => r.resourceType == RESOURCE_HYDROGEN
             })
-
             if(resources != undefined) {
                 if (resources.room.name == creep.room.name) {
                     if (creep.pickup(resources) == ERR_NOT_IN_RANGE) {
@@ -47,24 +31,20 @@ module.exports = {
             } else {
                 this.goToContainer(creep)
             }
-            
         }
     },
     goToContainer: function(creep) {
         let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: s => s.structureType == STRUCTURE_CONTAINER && 
-                s.store[RESOURCE_ENERGY] > 0
+                s.store[RESOURCE_HYDROGEN] > 0
         })
         
-        if(container == undefined) {
-            container = creep.room.storage
-        }
         if (container != undefined) {
-            if (container.store[RESOURCE_ENERGY] > 0){
-                if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            if (container.store[RESOURCE_HYDROGEN] > 0){
+                if (creep.withdraw(container, RESOURCE_HYDROGEN) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(container)
                 }
-            }         
+            } 
         }
     }
 };

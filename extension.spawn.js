@@ -1,4 +1,4 @@
-const listOfRoles = ['harvester', 'lorry', 'claimer', 'upgrader', 'repairer', 'builder', 'wallRepairer']
+const listOfRoles = ['harvester', 'lorry', 'claimer', 'upgrader', 'repairer', 'builder', 'wallRepairer', 'mineralLorry']
 
 StructureSpawn.prototype.createNewCreeper = function() {
     const room = this.room;
@@ -12,9 +12,10 @@ StructureSpawn.prototype.createNewCreeper = function() {
         this.memory.minCreeps = {
             harvester: 0,
             lorry: 1,
+            mineralLorry: 0,
             claimer: 0,
             upgrader: 1,
-            repairer: 1,
+            repairer: 0,
             builder: 1,
             wallRepairer: 0
         }
@@ -24,10 +25,10 @@ StructureSpawn.prototype.createNewCreeper = function() {
         this.memory.longDistanceHarvesters = {}
     }
 
-    const fullEnergy = room.energyCapacityAvailable
+    const fullEnergy = room.energyCapacityAvailable > 1800 ? 1800 : room.energyCapacityAvailable
     let name = undefined;
     if(Game.time % 5 == 0) {
-        console.log('Energy in room ' + this.name + ': ' + room.energyAvailable + '/' +fullEnergy);
+        console.log('Energy in room ' + this.name + ': ' + room.energyAvailable + '/' +room.energyCapacityAvailable);
     }
 
     if (numberOfCreeps['harvester'] == 0 && numberOfCreeps['lorry'] == 0) {
@@ -47,6 +48,10 @@ StructureSpawn.prototype.createNewCreeper = function() {
 
                 if (containers.length > 0) {
                     name = this.createMiner(source.id)
+                    if(name != undefined) {
+                        console.log(this.name + " create miner (" + name + ") for source: " + source.id)
+                        break;
+                    }
                 }
             }
         }
@@ -63,6 +68,9 @@ StructureSpawn.prototype.createNewCreeper = function() {
 
                 if (containers.length > 0) {
                     name = this.createMiner(mineral.id)
+                    if(name != undefined) {
+                        console.log(this.name + " create minerals miner (" + name + ") for source: " + mineral.id)
+                    }
                 }
             }
     }
@@ -79,18 +87,20 @@ StructureSpawn.prototype.createNewCreeper = function() {
                     }
             } else if (role == 'repairer' || role == 'wallRepairer') {
                 if (towers.length == 0 && numberOfCreeps[role] < this.memory.minCreeps[role]) {
-                    name = this.createBigCreep(room.energyAvailable > 1800 ? 1800 : room.energyAvailable, role)
+                    name = this.createBigCreep(fullEnergy, role)
                 }
             }  else if (role == 'builder') { 
                 let constructions = room.find(FIND_CONSTRUCTION_SITES)
                 if (constructions.length > 0 && numberOfCreeps[role] < this.memory.minCreeps[role]) {
-                    name = this.createBigCreep(room.energyAvailable > 1800 ? 1800 : room.energyAvailable, role)
+                    name = this.createBigCreep(fullEnergy, role)
                 }
             } else if (numberOfCreeps[role] < this.memory.minCreeps[role]) {
                 if (role == 'lorry') {
                     name = this.createLorry(150);
+                } else if (role == 'mineralLorry') {
+                    name = this.createMineralsLorry()
                 } else {
-                    name = this.createBigCreep(room.energyAvailable > 1800 ? 1800 : room.energyAvailable, role)
+                    name = this.createBigCreep(fullEnergy, role)
                 }
             } 
         }
@@ -195,5 +205,12 @@ StructureSpawn.prototype.createBigCreep =
 
     StructureSpawn.prototype.createShortAttacker =
     function (target) {
-        return this.createCreep([ATTACK,ATTACK, MOVE,MOVE,MOVE,MOVE], undefined, { role: 'shortAttacker', target: target })
+        return this.createCreep([ATTACK,ATTACK, MOVE,MOVE], undefined, { role: 'shortAttacker', target: target })
     }
+
+    StructureSpawn.prototype.createMineralsLorry =
+    function () {
+        var body = [CARRY, MOVE];
+
+        return this.createCreep(body, undefined, { role: 'mineralLorry', working: false });
+    };

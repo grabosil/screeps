@@ -8,7 +8,8 @@ let roles = {
     miner: require('role.miner'),
     lorry: require('role.lorry'),
     claimer: require('role.claimer'),
-    shortAttacker: require('role.shortAttacker')
+    shortAttacker: require('role.shortAttacker'),
+    mineralLorry: require('role.mineralLorry')
 }
 
 Creep.prototype.runRole = function() {
