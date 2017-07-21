@@ -26,7 +26,8 @@ StructureSpawn.prototype.createNewCreeper = function() {
         this.memory.longDistanceHarvesters = {}
     }
 
-    const fullEnergy = room.energyCapacityAvailable > 1800 ? 1800 : room.energyCapacityAvailable
+    const energyLimit = room.energyCapacityAvailable * 4 / 5
+    const fullEnergy = energyLimit > 600 ? energyLimit : room.energyCapacityAvailable
     let name = undefined;
     if(Game.time % 5 == 0) {
         console.log('Energy in room ' + this.name + ': ' + room.energyAvailable + '/' +room.energyCapacityAvailable);
@@ -114,15 +115,11 @@ StructureSpawn.prototype.createNewCreeper = function() {
             for (let roomName in this.memory.longDistanceHarvesters) {
                 numberOfLongDistanceHarvesters[roomName] = _.sum(Game.creeps, (c) => c.memory.role == 'longDistanceHarvester' && c.memory.target == roomName)
                 if (numberOfLongDistanceHarvesters[roomName] <  this.memory.longDistanceHarvesters[roomName]) {
-                    if (this.memory.longDistanceSource == undefined) {
-                        this.memory.longDistanceSource = 0
+                    let sourceId = 0
+                    if (numberOfLongDistanceHarvesters[roomName]%2 == 0) {
+                        sourceId = 1
                     }
-                    name = this.createLongDistanceHarvester(fullEnergy, 2, room.name, roomName, this.memory.longDistanceSource)
-                    if(this.memory.longDistanceSource == 0) {
-                        this.memory.longDistanceSource = 1
-                    } else {
-                        this.memory.longDistanceSource = 0
-                    }
+                    name = this.createLongDistanceHarvester(fullEnergy, 2, room.name, roomName, sourceId)
                 }
             }
         }

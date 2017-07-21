@@ -1,4 +1,4 @@
-var roleBuilder = require('role.builder')
+var roleUpgrader = require('role.upgrader')
 
 module.exports = {
     run: function(creep) {
@@ -32,7 +32,8 @@ module.exports = {
                     creep.moveTo(target)
                 }
             } else {
-                roleBuilder.run(creep)
+                creep.memory.role = 'upgrader'
+                roleUpgrader.run(creep)
             }
         } else {
             creep.getEnergy(true, true)
