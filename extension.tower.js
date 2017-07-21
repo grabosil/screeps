@@ -4,14 +4,18 @@ StructureTower.prototype.defend = function() {
         this.attack(target);
     } else {
         var structure = this.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (s) => s.hits < (s.hitsMax*0.2) && s.structureType != STRUCTURE_WALL
+            filter: (s) => s.hits < (s.hitsMax*0.2) && 
+            s.structureType != STRUCTURE_WALL && 
+            s.structureType != STRUCTURE_RAMPART
         })
 
         if (structure != undefined) {
             this.repair(structure)
         } else {
             var walls = this.room.find(FIND_STRUCTURES, {
-                filter: (s) => s.structureType == STRUCTURE_WALL
+                filter: (s) => (
+                    s.structureType == STRUCTURE_WALL || 
+                    s.structureType == STRUCTURE_RAMPART)
             })
 
             var target = undefined
