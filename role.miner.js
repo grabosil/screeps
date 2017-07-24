@@ -7,7 +7,9 @@ module.exports = {
 
         if(container) {
             if (creep.pos.isEqualTo(container.pos)) {
-                creep.harvest(source);
+                if ( _.sum(container.store) < container.storeCapacity) {
+                    creep.harvest(source);
+                }
             } else {
                 creep.moveTo(container);
             }

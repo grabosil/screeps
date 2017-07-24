@@ -4,6 +4,10 @@ module.exports = {
            let target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {
                filter: (c) => _.filter(c.body, (part) => part.type == "attack" || part.type == "ranged_attack").length > 0
            })
+           
+           if (creep.pos.x == 0 || creep.pos.x == 1) {
+               creep.move(RIGHT)
+           }
 
            if (target) {
                let errorcode = creep.attack(target)
@@ -31,8 +35,10 @@ module.exports = {
             }
             
         } else {
-            var exit = creep.room.findExitTo(creep.memory.target)
-            creep.moveTo(creep.pos.findClosestByRange(exit))
+            if(Game.spawns.Spawn1.memory.atckkersMove == 'GO') {
+                var exit = creep.room.findExitTo(creep.memory.target)
+                creep.moveTo(creep.pos.findClosestByRange(exit))
+            }
         }
     },
     attackStructure: function(creep) {

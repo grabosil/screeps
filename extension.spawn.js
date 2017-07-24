@@ -36,7 +36,7 @@ StructureSpawn.prototype.createNewCreeper = function() {
     if (numberOfCreeps['harvester'] == 0 && numberOfCreeps['lorry'] == 0) {
         if (numberOfCreeps['miner'] > 0 ||
             (room.storage != undefined && room.storage.store[RESOURCE_ENERGY] >= 150 + 550)) {
-            name = this.createLorry(150);
+            name = this.createLorry(450);
         } else {
             name = this.createBigCreep(room.energyAvailable, 'harvester')
         }
@@ -48,13 +48,16 @@ StructureSpawn.prototype.createNewCreeper = function() {
                     filter: s => s.structureType == STRUCTURE_CONTAINER
                 })
 
-                if (containers.length > 0) {
+                if (containers.length > 0 && source.energy > 0) {
                     name = this.createMiner(source.id)
                     if(name != undefined) {
                         console.log(this.name + " create miner (" + name + ") for source: " + source.id)
                         break;
                     }
                 }
+            }
+            if (name != undefined) { 
+                break;
             }
         }
 
@@ -63,7 +66,7 @@ StructureSpawn.prototype.createNewCreeper = function() {
             filter: s => s.structureType == STRUCTURE_EXTRACTOR
         })
         const mineral = minerals[0]
-        if (!_.some(creepsInRoom, c => c.memory.role == 'miner' && c.memory.sourceId == mineral.id) && room.energyAvailable >= 550 && extractor.length > 0) {
+        if (!_.some(creepsInRoom, c => c.memory.role == 'miner' && c.memory.sourceId == mineral.id) && mineral.mineralAmount > 0 && room.energyAvailable >= 550 && extractor.length > 0) {
                 let containers = mineral.pos.findInRange(FIND_STRUCTURES, 1, {
                     filter: s => s.structureType == STRUCTURE_CONTAINER
                 })
@@ -98,7 +101,7 @@ StructureSpawn.prototype.createNewCreeper = function() {
                 }
             } else if (numberOfCreeps[role] < this.memory.minCreeps[role]) {
                 if (role == 'lorry') {
-                    name = this.createLorry(150);
+                    name = this.createLorry(450);
                 } else if (role == 'mineralLorry') {
                     name = this.createMineralsLorry()
                 } else if (role == 'shortAttacker') {
@@ -215,7 +218,7 @@ StructureSpawn.prototype.createBigCreep =
 
     StructureSpawn.prototype.createShortAttacker =
     function (target) {
-        return this.createCreep([RANGED_ATTACK ,ATTACK, HEAL, HEAL, MOVE, MOVE, MOVE,MOVE], undefined, { role: 'shortAttacker', target: target })
+        return this.createCreep([TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE,MOVE,RANGED_ATTACK ,RANGED_ATTACK , ATTACK, ATTACK, HEAL, HEAL], undefined, { role: 'shortAttacker', target: target })
     }
 
     StructureSpawn.prototype.createMineralsLorry =

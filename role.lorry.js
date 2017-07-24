@@ -51,10 +51,29 @@ module.exports = {
         }
     },
     goToContainer: function(creep) {
-        let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        let containers = creep.pos.findInRange(FIND_STRUCTURES, 40, {
             filter: s => s.structureType == STRUCTURE_CONTAINER && 
                 s.store[RESOURCE_ENERGY] > 0
         })
+
+        let container = undefined
+
+        if (containers != undefined) {
+            containers.sort(function (a, b) {
+                if (a.store[RESOURCE_ENERGY] > b.store[RESOURCE_ENERGY]) {
+                    return 1;
+                }
+                    if (a.store[RESOURCE_ENERGY] < b.store[RESOURCE_ENERGY]) {
+                        return -1;
+                    }
+                    return 0;
+            })
+
+            container = containers[0]
+        }
+        
+        
+
         
         if(container == undefined) {
             container = creep.room.storage
@@ -66,5 +85,6 @@ module.exports = {
                 }
             }         
         }
-    }
+    },
+
 };
